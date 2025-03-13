@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/ATM_WS2">
+    <Resource auth="Container" 
+              name="atm/ATM_ws2" 
+              driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" 
+              url="jdbc:sqlserver://localhost:1433;databaseName=Workshop2;" 
+              logAbandoned="true" 
+              maxActive="100" 
+              maxIdle="30" 
+              maxWait="10000" 
+              username="sa"
+              password="admin2404" 
+              removeAbandoned="true" 
+              removeAbandonedTimeout="60" 
+              type="javax.sql.DataSource" 
+              
+              />
+</Context>
