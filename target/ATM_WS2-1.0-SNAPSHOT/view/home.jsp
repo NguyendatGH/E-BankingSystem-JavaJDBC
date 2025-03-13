@@ -278,7 +278,7 @@
             <div class="footer">© 2025 Your Company</div>
         </div>
 
-        <%-- Hiển thị alert nếu có thông báo --%>
+       
         <%
             String message = request.getParameter("message");
             if (message != null) {

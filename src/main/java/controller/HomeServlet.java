@@ -77,7 +77,7 @@ public class HomeServlet extends HttpServlet {
             byte[] imageData = (byte[]) session.getAttribute("CustomerPhoto");
 
             if (imageData != null) {
-                response.setContentType("image/jpeg"); // Hoặc "image/png" nếu ảnh là PNG
+                response.setContentType("image/jpeg"); 
                 response.setContentLength(imageData.length);
 
                 OutputStream out = response.getOutputStream();

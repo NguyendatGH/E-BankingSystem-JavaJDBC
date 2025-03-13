@@ -1,8 +1,4 @@
-<%-- 
-    Document   : updateProfile.jsp
-    Created on : Mar 13, 2025, 7:37:43 PM
-    Author     : rio
---%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -13,7 +9,7 @@
         function validateForm() {
             var form = document.forms["updateInforForm"];
             var email = form["email"].value;
-            var phoneNo = form["tel"].value; // Sửa phoneNo thành tel để khớp với name trong form
+            var phoneNo = form["tel"].value; 
 
             if (!email.endsWith("@gmail.com")) {
                 alert("Email must end with @gmail.com.");
@@ -63,7 +59,7 @@
 
         form {
             background: #2b2b2b;
-            padding: 0; /* Đã có padding từ container */
+            padding: 0;
             border-radius: 5px;
         }
 
@@ -95,7 +91,7 @@
         }
 
         input[type="file"] {
-            padding: 8px; /* Điều chỉnh padding cho file input */
+            padding: 8px; 
         }
 
         button,
@@ -121,7 +117,7 @@
         }
 
         button {
-            background: #444; /* Nút Remove Photo dùng màu khác */
+            background: #444; 
         }
 
         button:hover {

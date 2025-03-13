@@ -5,8 +5,6 @@
 package entity;
 
 import bussiness.Customer;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,7 +44,7 @@ public class CustomerDB {
 
             byte[] photoBytes = customer.getPhoto();
             if (photoBytes == null) {
-               ps.setNull(7, java.sql.Types.VARBINARY); //if user don't want to push a img to db
+               ps.setNull(7, java.sql.Types.VARBINARY); 
             } else {
                 ps.setBytes(7, photoBytes);
             }
