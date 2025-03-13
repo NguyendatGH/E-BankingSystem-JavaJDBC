@@ -105,7 +105,13 @@ public class Customer {
     public void setPhoto(byte[] photo) {
         this.photo = photo;
     }
-
+    
+    public String getPhotoBase64() {
+        if (photo != null) {
+            return java.util.Base64.getEncoder().encodeToString(photo);
+        }
+        return null;
+    }
     @Override
     public String toString() {
         return "Customer{" + "custNo=" + custNo + ", custFname=" + custFname + ", custLname=" + custLname + ", idNo=" + idNo + ", Tel=" + Tel + ", address=" + address + ", email=" + email + ", photo=" + photo + '}';

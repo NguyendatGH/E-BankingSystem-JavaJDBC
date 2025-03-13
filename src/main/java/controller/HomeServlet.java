@@ -5,6 +5,7 @@
 package controller;
 
 import bussiness.Customer;
+import bussiness.Translog;
 import entity.CustomerDB;
 import entity.TranslogDB;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -32,33 +34,60 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("in home servlet doget");
+
         HttpSession session = request.getSession();
         Integer accNo = (session != null) ? (Integer) session.getAttribute("accNo") : null;
         Integer custNo = (session != null) ? (Integer) session.getAttribute("custNo") : null;
         if (accNo == null) {
             System.out.println("No accNo found in session!");
-        } else {
-            System.out.println("accNo in home: " + accNo);
         }
 
         if (custNo == null) {
             System.out.println("No custNo found in session!");
-        } else {
-            System.out.println("custNo in home: " + custNo);
+        }
+        Customer c = new Customer();
+        if (session.getAttribute("Customer") == null) {
+            c = CustomerDB.getCustomerForHome(custNo);
+            session.setAttribute("Customer", c);
+
+            if (c.getPhoto() != null) {
+                session.setAttribute("CustomerPhoto", c.getPhoto());
+            }
+
         }
 
-        if (session.getAttribute("Customer") == null) {
-            Customer c = CustomerDB.getCustomerForHome(custNo);
-            session.setAttribute("Customer", c);
+        if (session.getAttribute("transactionList") == null) {
+            List<Translog> translog = TranslogDB.getTranslogsByAccount(accNo);
+            session.setAttribute("transactionList", translog);
         }
 
         request.setAttribute("accNo", accNo);
 
-        Double balance = TranslogDB.getBalance(accNo);
+        byte[] photoData = c.getPhoto();
+        if (photoData != null) {
+            System.out.println("" + photoData.length);
+        } else {
+            System.out.println("No image found!");
+        }
 
-        System.out.println("balance of account: " + balance);
+        Double balance = TranslogDB.getBalance(accNo);
         session.setAttribute("balance", balance);
+
+        if ("true".equals(request.getParameter("image"))) {
+            byte[] imageData = (byte[]) session.getAttribute("CustomerPhoto");
+
+            if (imageData != null) {
+                response.setContentType("image/jpeg"); // Hoặc "image/png" nếu ảnh là PNG
+                response.setContentLength(imageData.length);
+
+                OutputStream out = response.getOutputStream();
+                out.write(imageData);
+                out.close();
+            } else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Image not found");
+            }
+            return;
+        }
         request.getRequestDispatcher("/view/home.jsp").forward(request, response);
 
     }

@@ -26,32 +26,40 @@ public class LoginServlet extends HttpServlet {
         String url = "/view/login.jsp";
         getServletContext().getRequestDispatcher(url).forward(request, response);
     }
-
+    
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        Cookie[] cookies = request.getCookies();
-        String accNo = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("accNo".equals(cookie.getName())) {
-                    accNo = cookie.getValue();
-                   
-                    break;
-                }
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    Cookie[] cookies = request.getCookies();
+    String accNo = null;
+
+    if (cookies != null) {
+        for (Cookie cookie : cookies) {
+            if ("accNo".equals(cookie.getName())) {
+                accNo = cookie.getValue();
+                break;
             }
         }
-        
-        
-        if (accNo != null) {
-            request.setAttribute("accNo", accNo);
+    }
+
+    if (accNo != null) {
+        try {
+            int accNoInt = Integer.parseInt(accNo);
+            int custNo = AccountDB.getCustNoFromAccount(accNo); 
+            
             HttpSession session = request.getSession();
-            session.setAttribute("accNo", accNo);
-            request.getRequestDispatcher("/view/home.jsp").forward(request, response);
-        } else {
-            request.getRequestDispatcher("/view/login.jsp").forward(request, response);
+            session.setAttribute("accNo", accNoInt);
+            session.setAttribute("custNo", custNo);
+
+            response.sendRedirect(request.getContextPath() + "/HomeServlet");
+            return;
+        } catch (NumberFormatException e) {
+            Logger.getLogger(LoginServlet.class.getName()).log(Level.SEVERE, "Error retrieving custNo", e);
         }
     }
+
+    request.getRequestDispatcher("/view/login.jsp").forward(request, response);
+}
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -61,8 +69,6 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("rememberMe");
         boolean isChecked = "on".equals(rememberMe);
-
-        System.out.println("~~~~~~~~~~~~~~");
 
         try {
             int accNo = Integer.parseInt(accNoStr);

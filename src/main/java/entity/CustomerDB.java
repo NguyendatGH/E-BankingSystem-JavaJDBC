@@ -5,6 +5,7 @@
 package entity;
 
 import bussiness.Customer;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,7 +45,11 @@ public class CustomerDB {
             ps.setString(6, customer.getEmail());
 
             byte[] photoBytes = customer.getPhoto();
-            ps.setBytes(7, photoBytes);
+            if (photoBytes == null) {
+               ps.setNull(7, java.sql.Types.VARBINARY); //if user don't want to push a img to db
+            } else {
+                ps.setBytes(7, photoBytes);
+            }
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -89,9 +94,8 @@ public class CustomerDB {
         }
         return customer;
     }
-    
-    
-       public static Customer getCustomerForHome(int custNo) {
+
+    public static Customer getCustomerForHome(int custNo) {
         Customer customer = null;
 
         ConnectionPool pool = ConnectionPool.getInstance();
@@ -166,4 +170,33 @@ public class CustomerDB {
 
         return custList;
     }
+
+    public static boolean updateCustumerInfor(int custNo, String fname, String lname, String email, String tel, String address, byte[] photo) {
+        String sqlString = "UPDATE Customer SET custFname = ?, custLname = ?, Email = ?, Tel = ?, Address = ?, Photo = ? WHERE CustNo = ?";
+        ConnectionPool pool = ConnectionPool.getInstance();
+        Connection connection = pool.getConnection();
+
+        PreparedStatement ps = null;
+        try {
+
+            ps = connection.prepareStatement(sqlString);
+            ps.setString(1, fname);
+            ps.setString(2, lname);
+            ps.setString(3, email);
+            ps.setString(4, tel);
+            ps.setString(5, address);
+            ps.setBytes(6, photo);
+            ps.setInt(7, custNo);
+
+            int rowsUpdated = ps.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            DBUtils.closePreparedStatement(ps);
+            pool.freeConnection(connection);
+        }
+    }
+
 }
